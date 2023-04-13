@@ -1,0 +1,19 @@
+header
+{
+    height: 80px;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
+}
+
+.container
+{
+    height: inherit;
+}
+
+.logo
+{
+    font-size: 32px;
+    color: purple;
+    text-decoration: none;
+    font-weight: bold;
+}
