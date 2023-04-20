@@ -13,10 +13,11 @@ class m230316_093901_create_posts_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%posts}}', [
-            'id' => $this->primaryKey(),
+            'p_id' => $this->primaryKey(),
             'title' => $this->string(),
             'text' => $this->string(),
-            'author' => $this->string(),
+            'author_id' => $this->string(),
+            'status' => $this->integer(),
             'tags' => $this->string(),
             'pub_date' => $this->string()
         ]);

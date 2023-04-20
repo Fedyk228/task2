@@ -13,6 +13,16 @@ class Posts extends ActiveRecord
         return 'posts';
     }
 
+    public function rules()
+    {
+        return [
+            [['title'], 'required', 'message' => 'Title field required'],
+            ['text', 'string'],
+            ['status', 'in', 'range'=>[1,2,3]],
+            ['tags', 'string']
+        ];
+    }
+
 }
 
 

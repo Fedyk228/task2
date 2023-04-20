@@ -2,6 +2,8 @@
 
 /** @var controllers\SiteController $posts */
 
+use yii\bootstrap5\ActiveForm;
+
 $this->title = 'Blog Home Page';
 ?>
 
@@ -10,7 +12,9 @@ $this->title = 'Blog Home Page';
 <hr>
 
 <div class="row">
-    <?php foreach ($posts as $post) : ?>
+    <?php
+        if(sizeof($posts)) :
+    foreach ($posts as $post) : ?>
         <div class="col-sm-6 my-1">
             <div class="card">
                 <div class="card-body">
@@ -19,16 +23,22 @@ $this->title = 'Blog Home Page';
                     <p><?= $post['text'] ?></p>
                 </div>
                 <div class="card-footer">
-                    <p><b>Author:</b> <?= $post['author'] ?></p>
+                    <p><b>Author:</b> <?= $post['username'] ?></p>
 
                     <div class="row">
                         <div class="col-sm-6">
-                            <p class="text-primary">Comments <?= $post['comments'] ?></p>
-                            <a href="/web/?r=site/post&id=<?= $post['id'] ?>" class="btn btn-primary">Read</a>
+                            <?php ActiveForm::begin(); ?>
+                                <p class="text-primary">Comments <?= $post['comments'] ?></p>
+                                <a href="/web/?r=site/post&id=<?= $post['p_id'] ?>" class="btn btn-primary">Read</a>
+                                <?php if($post['author_id'] == $user_id) : ?>
+                                    <input type="hidden" name="p_id" value="<?= $post['p_id']; ?>">
+                                <button class="btn btn-danger">Remove post</button>
+                                <?php endif; ?>
+                            <?php ActiveForm::end(); ?>
                         </div>
                         <div class="col-sm-6">
                             <?php
-                            $tags = json_decode($post['tags'], true);
+                            $tags = explode(',', $post['tags']);
 
                             foreach ($tags as $tag) :
                                 ?>
@@ -39,5 +49,9 @@ $this->title = 'Blog Home Page';
                 </div>
             </div>
         </div>
-    <?php endforeach; ?>
+    <?php endforeach;
+        else :
+    ?>
+    <h1 class="text-muted">No posts</h1>
+    <?php endif; ?>
 </div>

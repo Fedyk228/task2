@@ -19,6 +19,7 @@ class Users extends ActiveRecord
         return [
             [['email'], 'required', 'message' => 'Email field required'],
             [['password'], 'required', 'message' => 'Password field required'],
+            ['email', 'email'],
             ['username', 'string']
         ];
     }

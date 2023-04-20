@@ -32,8 +32,15 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $posts = Posts::find()->asArray()->all();
+
+        $posts = Posts::find()->select('*')->leftJoin(Users::tableName(), Posts::tableName() . '.author_id = ' . Users::tableName() . '.id')->asArray()->all();
+
+//        $posts = Posts::find()->select('*')->asArray()->all();
+
+
         $comments = Comments::find()->asArray()->all();
+
+        $existUser = self::checkLogin();
 
         $result = [];
 
@@ -42,7 +49,7 @@ class SiteController extends Controller
             $count = 0;
             foreach ($comments as $comment)
             {
-                if($post['id'] == $comment['post_id'])
+                if($post['p_id'] == $comment['post_id'])
                     $count++;
             }
 
@@ -51,7 +58,22 @@ class SiteController extends Controller
             $result[$i]['comments'] = $count;
         }
 
-        return $this->render('index', ['posts' => $result]);
+
+        if(Yii::$app->request->post())
+        {
+            $post = Posts::findOne(['p_id' => Yii::$app->request->post('p_id'), 'author_id' => $existUser['id']]);
+
+            if($post)
+            {
+                if($post->delete())
+                    return $this->goBack();
+            }
+        }
+
+
+
+
+        return $this->render('index', ['posts' => $result, 'user_id' => $existUser['id']]);
     }
 
     public function actionAbout()
@@ -59,13 +81,39 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
+    public function actionAddPost()
+    {
+        if(self::checkLogin())
+        {
+            $model = new Posts();
+
+            if($model->load(Yii::$app->request->post()))
+            {
+                $model->pub_date = Date('d.m.Y - H:i');
+                $model->author_id = self::checkLogin()['id'];
+
+                if($model->save())
+                    return $this->goBack();
+
+            }
+
+            return $this->render('add-post', ['model' => $model]);
+        }
+
+        return Yii::$app->controller->goHome();
+    }
+
+
     public function actionPost()
     {
-        $post = Posts::find()->asArray()->where(['id' => $_GET['id']])->one();
-        $comments = Comments::find()->asArray()->where(['post_id' => $_GET['id']])->all();
+//        $post = Posts::find()->asArray()->where(['p_id' => Yii::$app->request->get('id') ])->one();
+        $post = Posts::find()->select('*')->leftJoin(Users::tableName(), Posts::tableName() . '.author_id = ' . Users::tableName() . '.id')->asArray()->where(['p_id' => Yii::$app->request->get('id') ])->one();
+        $comments = Comments::find()->asArray()->where(['post_id' => Yii::$app->request->get('id') ])->all();
 
         return $this->render('post', ['post' => $post, 'comments' => $comments]);
     }
+
+
 
     public function actionAddComment()
     {

@@ -9,10 +9,10 @@
     <em class="text-primary"><?= $post['pub_date'] ?></em>
     <h1><?= $post['title'] ?></h1>
     <p><?= $post['text'] ?></p>
-    <p><b>Author:</b> <?= $post['author'] ?></p>
+    <p><b>Author:</b> <?= $post['username'] ?></p>
 
 <?php
-$tags = json_decode($post['tags'], true);
+$tags = explode(',', $post['tags']);
 
 foreach ($tags as $tag) :
     ?>
@@ -21,7 +21,7 @@ foreach ($tags as $tag) :
 
     <hr>
 
-    <h4>Comments <a href="/web/?r=site/add-comment&id=<?= $post['id'] ?>" class="btn btn-secondary">Add comment</a> </h4>
+    <h4>Comments <a href="/web/?r=site/add-comment&id=<?= $post['p_id'] ?>" class="btn btn-secondary">Add comment</a> </h4>
 
 <?php if(sizeof($comments)) : ?>
     <div class="list-group">

@@ -45,6 +45,7 @@ if($_GET['type'] == 'logout')
             &nbsp;|&nbsp;
             <?php if($existUser) : ?>
             <span>Hello, <?= $existUser['username']; ?>!</span>
+                <a href="/web/?r=site/add-post">Add post</a>
             <a href="/web/?r=site&type=logout">Logout</a>
             <?php else : ?>
             <a href="/web/?r=site/register">Register</a>
