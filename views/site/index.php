@@ -32,6 +32,7 @@ $this->title = 'Blog Home Page';
                                 <a href="/web/?r=site/post&id=<?= $post['p_id'] ?>" class="btn btn-primary">Read</a>
                                 <?php if($post['author_id'] == $user_id) : ?>
                                     <input type="hidden" name="p_id" value="<?= $post['p_id']; ?>">
+                                    <a class="btn btn-secondary" href="/web/?r=site/edit-post&id=<?= $post['p_id'] ?>">Edit post</a>
                                 <button class="btn btn-danger">Remove post</button>
                                 <?php endif; ?>
                             <?php ActiveForm::end(); ?>

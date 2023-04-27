@@ -70,9 +70,6 @@ class SiteController extends Controller
             }
         }
 
-
-
-
         return $this->render('index', ['posts' => $result, 'user_id' => $existUser['id']]);
     }
 
@@ -103,14 +100,52 @@ class SiteController extends Controller
         return Yii::$app->controller->goHome();
     }
 
+    public function actionEditPost()
+    {
+        $existUser = self::checkLogin();
+
+        if($existUser)
+        {
+            $model = Posts::findOne(['p_id' => Yii::$app->request->get('id'), 'author_id' => $existUser['id']]);
+
+            if($model->load(Yii::$app->request->post()))
+            {
+
+                if($model->save())
+                    return $this->goBack();
+
+            }
+
+            return $this->render('edit-post', ['model' => $model]);
+        }
+
+        return Yii::$app->controller->goHome();
+    }
+
 
     public function actionPost()
     {
 //        $post = Posts::find()->asArray()->where(['p_id' => Yii::$app->request->get('id') ])->one();
+
+        $existUser = self::checkLogin();
+
+
         $post = Posts::find()->select('*')->leftJoin(Users::tableName(), Posts::tableName() . '.author_id = ' . Users::tableName() . '.id')->asArray()->where(['p_id' => Yii::$app->request->get('id') ])->one();
         $comments = Comments::find()->asArray()->where(['post_id' => Yii::$app->request->get('id') ])->all();
 
-        return $this->render('post', ['post' => $post, 'comments' => $comments]);
+
+        if(Yii::$app->request->post())
+        {
+            $comment = Comments::findOne(['id' => Yii::$app->request->post('comment_id')]);
+
+            if($comment)
+            {
+                if($comment->delete())
+                    return $this->goBack();
+            }
+        }
+
+        return $this->render('post', ['post' => $post, 'comments' => $comments, 'user_id' => $existUser['id']]);
     }
 
 
@@ -129,9 +164,29 @@ class SiteController extends Controller
 
         }
 
-
-
         return $this->render('add-comment', ['model' => $model]);
+    }
+
+    public function actionEditComment()
+    {
+        $existUser = self::checkLogin();
+
+        if($existUser)
+        {
+            $model = Comments::findOne(['id' => Yii::$app->request->get('id')]);
+
+            if($model->load(Yii::$app->request->post()))
+            {
+                if($model->save())
+                    return $this->goBack();
+            }
+
+            return $this->render('edit-comment', ['model' => $model]);
+        }
+
+        return Yii::$app->controller->goHome();
+
+
     }
 
     public function actionRegister()

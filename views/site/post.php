@@ -2,6 +2,10 @@
 
 /** @var controllers\SiteController $post */
 
+use yii\bootstrap5\ActiveForm;
+
+
+
 ?>
 
     <a href="/web/" class="btn btn-primary">Go back</a>
@@ -29,11 +33,20 @@ foreach ($tags as $tag) :
             <div class="list-group-item">
                 <p><?= $comment['text'] ?></p>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <em class="text-primary"><?= $comment['pub_date'] ?></em>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <p><b>Author:</b> <?= $comment['author'] ?></p>
+                    </div>
+                    <div class="col-sm-4 text-end">
+                        <?php ActiveForm::begin(); ?>
+                            <?php if($post['author_id'] == $user_id) : ?>
+                                <input type="hidden" name="comment_id" value="<?= $comment['id']; ?>">
+                                <a class="btn btn-secondary" href="/web/?r=site/edit-comment&id=<?= $comment['id'] ?>">Edit comment</a>
+                                <button class="btn btn-danger">Remove comment</button>
+                            <?php endif; ?>
+                        <?php ActiveForm::end(); ?>
                     </div>
                 </div>
             </div>
